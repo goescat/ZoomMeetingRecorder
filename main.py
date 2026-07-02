@@ -1,28 +1,27 @@
-import time
+import subprocess
 
-from detector import in_meeting
-from recorder import start, stop
 
-recording = False
+def in_meeting():
+    script = r'''
+    tell application "System Events"
+        if not (exists process "zoom.us") then
+            return false
+        end if
 
-while True:
+        tell process "zoom.us"
+            try
+                exists menu bar item "Meeting" of menu bar 1
+            on error
+                false
+            end try
+        end tell
+    end tell
+    '''
 
-    meeting = in_meeting()
+    result = subprocess.run(
+        ["osascript", "-e", script],
+        capture_output=True,
+        text=True,
+    )
 
-    if meeting and not recording:
-
-        print("開始錄影")
-
-        start()
-
-        recording = True
-
-    elif not meeting and recording:
-
-        print("停止錄影")
-
-        stop()
-
-        recording = False
-
-    time.sleep(2)
+    return result.stdout.strip().lower() == "true"
