@@ -51,10 +51,9 @@ def start():
         "-pix_fmt", "yuv420p",
         "-realtime", "1",
 
-        "-c:a", "aac",
+        "-c:a", "aac_at",
         "-ar", "48000",
         "-b:a", "192k",
-        "-af", "aresample=async=1:first_pts=0",
 
         filename,
     ]
